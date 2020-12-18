@@ -1,7 +1,9 @@
-function sayHi (  name ){
-  var age=10;
+function sayHi(name) {
+  const age = 10;
 }
 
-const age=12;
+const age = 12;
 
-var things = ['cool', "double"   ]
+const things = ['cool', 'double'];
+
+const lest = 'frem';
