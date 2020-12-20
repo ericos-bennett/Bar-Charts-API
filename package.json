@@ -1,9 +1,10 @@
 {
   "name": "bar-charts",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "LHL Prep Bar Chart Stretch Project",
-  "main": "main.js",
+  "main": "index.html",
   "scripts": {
+    "format": "prettier --write '**/*.{js,css,html}'",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -16,18 +17,10 @@
   "license": "ISC",
   "homepage": "https://github.com/ericos-bennett/bar-charts#readme",
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.15.0",
-    "eslint-config-airbnb": "^18.2.1",
+    "eslint": "^7.16.0",
     "eslint-config-lighthouselabs": "github:lighthouse-labs/eslint-config-lighthouselabs",
-    "eslint-config-prettier": "^6.15.0",
-    "eslint-config-wesbos": "^1.0.1",
-    "eslint-plugin-html": "^6.1.1",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.0",
-    "eslint-plugin-react": "^7.21.5",
-    "eslint-plugin-react-hooks": "^4.2.0",
     "prettier": "^2.2.1"
   }
 }
