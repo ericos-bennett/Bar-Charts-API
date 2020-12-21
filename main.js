@@ -42,6 +42,7 @@ const prepareLayout = function (element) {
   $('#bar-chart-content').css({
     display: 'flex',
     'justify-content': 'space-evenly',
+    'align-items': 'flex-end',
     'padding-top': '1em'
   });
 };
