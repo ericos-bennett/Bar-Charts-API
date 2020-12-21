@@ -1,0 +1,32 @@
+html, body {
+  height: 100%;
+}
+
+header {
+  height: 10%;
+  padding: 1.25em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+hr {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+main {
+  height: calc(90% - 5em);
+  padding: 1.25em;
+}
+
+#bar-box {
+  height: 80%;
+  width: 80%;
+  margin: auto;
+  border: 1px solid black;
+}
