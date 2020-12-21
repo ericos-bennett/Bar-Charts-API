@@ -28,29 +28,17 @@ const testOptions = {
   titleColor: 'red'
 };
 
-/*--------------------------
---MAIN FUNCTION STATEMENTS--
--------------------------*/
-
-// Template for the final API function
-const drawBarChart = function (data, options, element) {
-  //pass
-};
-
-// Convert the input element into a jQuery object
-const selectedElement = $(testElement);
-
 /*----------------
 --PREPARE LAYOUT--
 ----------------*/
 
 // Add padding and flexbox properties to the selected element
 const prepareLayout = function (element) {
-  selectedElement.css({ padding: '2em', 'box-sizing': 'border-box' });
+  $(element).css({ padding: '2em', 'box-sizing': 'border-box' });
   // Add a placeholder title div
-  selectedElement.append('<div id="bar-chart-title"></div>');
+  $(element).append('<div id="bar-chart-title"></div>');
   // Add the bar chart contents div and add flexbox
-  selectedElement.append('<div id="bar-chart-content"></div>');
+  $(element).append('<div id="bar-chart-content"></div>');
   $('#bar-chart-content').css({
     display: 'flex',
     'justify-content': 'space-evenly',
@@ -70,6 +58,10 @@ const addTitle = function (options) {
     color: options.titleColor
   });
 };
+
+/*----------
+--ADD BARS--
+----------*/
 
 const addBars = function (data, options) {
   // Loop through the input array for each value
@@ -96,6 +88,15 @@ const addBars = function (data, options) {
   });
 };
 
-prepareLayout(testElement);
-addTitle(testOptions);
-addBars(testData1, testOptions);
+/*--------------------------
+--MAIN FUNCTION STATEMENTS--
+-------------------------*/
+
+// Template for the final API function
+const drawBarChart = function (data, options, element) {
+  prepareLayout(element);
+  addTitle(options);
+  addBars(data, options);
+};
+
+drawBarChart(testData1, testOptions, testElement);
