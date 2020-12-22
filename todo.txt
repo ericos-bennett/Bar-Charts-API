@@ -1,0 +1,3 @@
+1. Make y-axis ticks generate from top
+2. Round (or scientific notation?) y-axis numbers
+3. Abbreviate x-axis labels or turn side them sideways when crunched

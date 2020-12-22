@@ -32,9 +32,9 @@ const testData1 = [
 
 // Test data with label names
 const testData2 = [
-  [10, 'el1'],
-  [20, 'el2'],
-  [30, 'el3']
+  [10, 'Canada'],
+  [20, 'Mozambique'],
+  [30, 'Paraguay']
 ];
 
 // Options object template
@@ -120,16 +120,25 @@ const addBars = function (data, options) {
   // Determine the height we want to set for the highest bar
   let maxBarHeight = $('#bar-chart-bars').height();
 
+  // Determine the chart values to use, depending on the data input type
+  let chartValues = [];
+  for (i = 0; i < data.length; i++) {
+    if (typeof data[i] === 'number') {
+      chartValues.push(data[i]);
+    } else if (typeof data[i] === 'object') {
+      chartValues.push(data[i][0]);
+    }
+  }
+
   // **Dertermine the value of the highest data point
-  let highestValue = data.reduce(function (a, b) {
+  let highestValue = chartValues.reduce(function (a, b) {
     return Math.max(a, b);
   });
 
   // **Loop through the input array for each value
-  $.each(data, function (i, val) {
+  $.each(chartValues, function (i, val) {
     // Create the DOM element to be inserted for each
-    let barDiv = '<div class="bar-div"></div>';
-    let bar = '<div id=bar' + i + ' class="bar">' + barDiv + '</div>';
+    let bar = '<div class="bar"></div>';
 
     // Determine the bar height for each (accounting for the borders)
     let barHeight = (val / highestValue) * maxBarHeight - 2;
@@ -138,7 +147,7 @@ const addBars = function (data, options) {
     $('#bar-chart-bars').append(bar);
 
     // Specify the height, width, border, and color of each bar
-    $('#bar' + i + ' .bar-div').css({
+    $('.bar').eq(i).css({
       height: barHeight,
       width: barWidth,
       border: '1px solid black',
@@ -165,8 +174,18 @@ const addYAxis = function (data, options) {
   // Determine the height we want to set for the highest bar
   let maxBarHeight = $('#bar-chart-bars').height();
 
+  // Determine the chart values to use, depending on the data input type
+  let chartValues = [];
+  for (i = 0; i < data.length; i++) {
+    if (typeof data[i] === 'number') {
+      chartValues.push(data[i]);
+    } else if (typeof data[i] === 'object') {
+      chartValues.push(data[i][0]);
+    }
+  }
+
   // **Dertermine the value of the highest data point
-  let highestValue = data.reduce(function (a, b) {
+  let highestValue = chartValues.reduce(function (a, b) {
     return Math.max(a, b);
   });
 
@@ -213,8 +232,25 @@ const addXAxis = function (data, options) {
       .css({
         position: 'absolute',
         top: '-0.5em',
-        right: `${i * barWidth + barWidth / 2 - 2}px`
+        right: `${(data.length - i - 1) * barWidth + barWidth / 2 - 1}px`,
+        transform: 'translate(50%,0)'
       });
+  }
+
+  // Add value labels below each tick if they are included in the data array
+  for (i = 0; i < data.length; i++) {
+    if (typeof data[i] === 'object') {
+      $('#x-axis-bar').append(`<span class="label">${data[i][1]}</span>`);
+      $('#x-axis-bar .label')
+        .eq(i)
+        .css({
+          position: 'absolute',
+          top: '.75em',
+          right: `${(data.length - i - 1) * barWidth + barWidth / 2 - 1}px`,
+          transform: 'translate(50%,0)',
+          color: options.labelColor
+        });
+    }
   }
 };
 
@@ -231,4 +267,4 @@ const drawBarChart = function (data, options, element) {
   addXAxis(data, options);
 };
 
-drawBarChart(testData1, testOptions, testElement);
+drawBarChart(testData2, testOptions, testElement);
