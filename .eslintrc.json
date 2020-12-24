@@ -4,5 +4,5 @@
     "es6": true,
     "jquery": true
   },
-  "extends": ["eslint:recommended", "plugin:prettier/recommended", "eslint-config-lighthouselabs"]
+  "extends": ["eslint:recommended", "eslint-config-lighthouselabs", "plugin:prettier/recommended"]
 }
