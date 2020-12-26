@@ -7,7 +7,7 @@ const testElement = '#bar-box';
 
 // Test data without label names
 const testData1 = [
-  60,
+  2000,
   200,
   150,
   400,
@@ -32,11 +32,14 @@ const testData1 = [
 
 // Test data with label names
 const testData2 = [
+  [60, 'Zimbabwe'],
   [10, 'Canada'],
   [20, 'Mozambique'],
   [30, 'Paraguay'],
   [140, 'USA']
 ];
+
+const testData3 = [0.000002, 0.000005, 0.000003, 0.000008];
 
 // Options object template
 const testOptions = {
@@ -45,11 +48,11 @@ const testOptions = {
   barColor: 'turquoise',
   labelColor: 'green',
   // barSpacing effects bar width
-  barSpacing: '30',
+  barSpacing: '0',
   title: 'My Chart',
   titleSize: '40px',
   titleColor: 'pink',
-  yAxisTicks: 4
+  yAxisDivisions: 4
 };
 
 /*----------------
@@ -118,10 +121,10 @@ const addBars = function (data, options) {
   // Calculate the chart content width and width of each bar (accounting for the borders)
   let contentWidth = $('#bar-chart-bars').width();
   let barWidth =
-    (contentWidth / data.length - 2) * ((100 - options.barSpacing) / 100);
+    (contentWidth / data.length - 2) * ((1 - options.barSpacing) / 1);
 
   // Determine the height we want to set for the highest bar
-  let maxBarHeight = $('#bar-chart-bars').height();
+  let maxBarHeight = $('#bar-chart-bars').height() - 16;
 
   // Determine the chart values to use, depending on the data input type
   let chartValues = [];
@@ -192,7 +195,7 @@ const addYAxis = function (data, options) {
     height: 'calc(100% + 2em)',
     width: '.5px',
     'background-color': 'black',
-    margin: '0 auto',
+    'margin-left': '3em',
     position: 'relative'
   });
 
@@ -215,20 +218,21 @@ const addYAxis = function (data, options) {
   });
 
   // Add evenly spaced ticks and their values to the y-axis bar, amount qualified in options
-  for (let i = 0; i < options.yAxisTicks; i++) {
-    let tickValue = highestValue * ((i + 1) / (options.yAxisTicks + 1));
+  for (let i = 0; i < options.yAxisDivisions + 1; i++) {
+    let tickValue = highestValue * (i / options.yAxisDivisions);
     // Determine the label significant digits, based on the number size
     let tickValueLabel =
-      tickValue >= 10000 ? tickValue.toPrecision(2) : tickValue.toPrecision(4);
+      tickValue >= 100000
+        ? tickValue.toPrecision(2)
+        : Number(tickValue.toPrecision(4));
     $('#y-axis-bar').append(`<span>${tickValueLabel} &#8212;</span>`);
     $('#y-axis-bar span')
       .eq(i)
       .css({
         position: 'absolute',
         'white-space': 'nowrap',
-        top: `calc(${
-          maxBarHeight - (tickValue / highestValue) * maxBarHeight
-        }px - 0.5em)`,
+        top:
+          maxBarHeight - (tickValue / highestValue) * (maxBarHeight - 16) - 8,
         right: '-0.5em'
       });
   }
@@ -242,7 +246,7 @@ const addXAxis = function (data, options) {
   // Generate the x-axis bar and style it
   $('#x-axis').append('<span id="x-axis-bar"></span>');
   $('#x-axis-bar').css({
-    width: 'calc(100% - 1em)',
+    width: 'calc(100% - 2em)',
     height: '1px',
     'background-color': 'black',
     position: 'relative',
@@ -303,7 +307,8 @@ const addXAxis = function (data, options) {
     if ($(this)[0].scrollWidth - $(this).width() > 1) {
       $('.label').css({
         transform: 'rotate(-30deg) translate(-50%,0)',
-        'text-align': 'right'
+        'text-align': 'right',
+        direction: 'rtl'
       });
     }
   });
