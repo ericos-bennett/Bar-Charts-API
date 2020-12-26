@@ -7,7 +7,7 @@ const testElement = '#bar-box';
 
 // Test data without label names
 const testData1 = [
-  2000,
+  2200,
   200,
   150,
   400,
@@ -15,8 +15,8 @@ const testData1 = [
   200,
   150,
   400,
-  60,
-  2000,
+  200,
+  -2000,
   1500,
   400,
   950,
@@ -32,7 +32,7 @@ const testData1 = [
 
 // Test data with label names
 const testData2 = [
-  [60, 'Zimbabwe'],
+  [70, 'Zimbabwe'],
   [10, 'Canada'],
   [20, 'Mozambique'],
   [30, 'Paraguay'],
@@ -48,7 +48,7 @@ const testOptions = {
   barColor: 'turquoise',
   labelColor: 'green',
   // barSpacing effects bar width
-  barSpacing: '0',
+  barSpacing: '0.25',
   title: 'My Chart',
   titleSize: '40px',
   titleColor: 'pink',
@@ -64,6 +64,7 @@ const prepareLayout = function (element, options) {
   $(element).css({
     padding: '2em',
     'box-sizing': 'border-box',
+    'font-size': '16px',
     display: 'flex',
     'flex-direction': 'column'
   });
@@ -94,10 +95,7 @@ const prepareLayout = function (element, options) {
 
   // Add the x-axis div
   $(element).append('<div id="x-axis"></div>');
-  $('#x-axis').css({
-    // Why does this work as 3em instead of 2em??
-    height: '5em'
-  });
+  $('#x-axis').css('height', '4em');
 
   // Style the bars container now that the other devs have been generated
   $('#bar-chart-bars').css({
@@ -105,7 +103,6 @@ const prepareLayout = function (element, options) {
     'justify-content': 'space-around',
     'align-items': 'flex-end',
     'flex-grow': '1',
-
     height:
       $(element).height() -
       $('#bar-chart-title').height() -
@@ -136,15 +133,26 @@ const addBars = function (data, options) {
     }
   }
 
-  // **Dertermine the value of the highest data point
+  // Set the lower boundary of the bars to the lowest value, or 0
+  let bottom = chartValues.reduce(function (a, b) {
+    return Math.min(a, b);
+  });
+  if (bottom > 0) {
+    bottom = 0;
+  }
+
+  // Dertermine the highest input value
   let highestValue = chartValues.reduce(function (a, b) {
     return Math.max(a, b);
   });
 
+  // Determine the range between the highest and lowest values
+  let range = highestValue - bottom;
+
   // **Loop through the input array for each value
   $.each(chartValues, function (i, val) {
     // Determine the bar height for each (accounting for the borders)
-    let barHeight = (val / highestValue) * maxBarHeight - 2;
+    let barHeight = ((val - bottom) / range) * maxBarHeight - 2;
 
     // Append a bar div to the chart area
     $('#bar-chart-bars').append('<div class="bar"></div>');
@@ -154,6 +162,7 @@ const addBars = function (data, options) {
       height: barHeight,
       width: barWidth,
       border: '1px solid black',
+      'border-bottom-style': 'none',
       'background-color': options.barColor,
       display: 'flex',
       'justify-content': 'center'
@@ -192,7 +201,7 @@ const addYAxis = function (data, options) {
   // Generate y-axis bar
   $('#y-axis').append('<div id="y-axis-bar"></div>');
   $('#y-axis-bar').css({
-    height: 'calc(100% + 2em)',
+    height: 'calc(100% + 0.7em)',
     width: '.5px',
     'background-color': 'black',
     'margin-left': '3em',
@@ -212,17 +221,28 @@ const addYAxis = function (data, options) {
     }
   }
 
-  // **Dertermine the value of the highest data point
+  // Set the lower boundary of the axes to the lowest value, or 0
+  let bottom = chartValues.reduce(function (a, b) {
+    return Math.min(a, b);
+  });
+  if (bottom > 0) {
+    bottom = 0;
+  }
+
+  // Dertermine the highest input value
   let highestValue = chartValues.reduce(function (a, b) {
     return Math.max(a, b);
   });
 
+  // Determine the range between the highest and lowest values
+  let range = highestValue - bottom;
+
   // Add evenly spaced ticks and their values to the y-axis bar, amount qualified in options
   for (let i = 0; i < options.yAxisDivisions + 1; i++) {
-    let tickValue = highestValue * (i / options.yAxisDivisions);
+    let tickValue = range * (i / options.yAxisDivisions) + bottom;
     // Determine the label significant digits, based on the number size
     let tickValueLabel =
-      tickValue >= 100000
+      tickValue >= 100000 || tickValue <= -100000
         ? tickValue.toPrecision(2)
         : Number(tickValue.toPrecision(4));
     $('#y-axis-bar').append(`<span>${tickValueLabel} &#8212;</span>`);
@@ -232,7 +252,9 @@ const addYAxis = function (data, options) {
         position: 'absolute',
         'white-space': 'nowrap',
         top:
-          maxBarHeight - (tickValue / highestValue) * (maxBarHeight - 16) - 8,
+          maxBarHeight -
+          ((tickValue - bottom) / range) * (maxBarHeight - 16) -
+          8,
         right: '-0.5em'
       });
   }
@@ -246,11 +268,10 @@ const addXAxis = function (data, options) {
   // Generate the x-axis bar and style it
   $('#x-axis').append('<span id="x-axis-bar"></span>');
   $('#x-axis-bar').css({
-    width: 'calc(100% - 2em)',
+    width: 'calc(100% - 2.5em)',
     height: '1px',
     'background-color': 'black',
     position: 'relative',
-    top: '1em',
     float: 'right'
   });
 
@@ -265,7 +286,7 @@ const addXAxis = function (data, options) {
     float: 'right',
     display: 'flex',
     'justify-content': 'space-around',
-    transform: 'translate(0,0.5em)'
+    transform: 'translate(0,-0.5em)'
   });
 
   // Add ticks for each bar in the chart
@@ -285,7 +306,7 @@ const addXAxis = function (data, options) {
     float: 'right',
     display: 'flex',
     'justify-content': 'space-around',
-    transform: 'translate(0,0.7em)'
+    transform: 'translate(0,-0.2em)'
   });
 
   // If they exist in the data input, add labels for each bar in the chart
@@ -306,7 +327,7 @@ const addXAxis = function (data, options) {
   $('.label').each(function () {
     if ($(this)[0].scrollWidth - $(this).width() > 1) {
       $('.label').css({
-        transform: 'rotate(-30deg) translate(-50%,0)',
+        transform: 'rotate(-30deg) translate(-50%,-0.2em)',
         'text-align': 'right',
         direction: 'rtl'
       });
@@ -326,4 +347,4 @@ const drawBarChart = function (data, options, element) {
   addXAxis(data, options);
 };
 
-drawBarChart(testData2, testOptions, testElement);
+drawBarChart(testData1, testOptions, testElement);
