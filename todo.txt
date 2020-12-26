@@ -1,4 +1,5 @@
-Different colors for each bar (as an array not a string in options.)
+Add default bar and label colors if none specified
+Change data input to objects...
 Work on stacked bars
 
 Y-axis labels do not work well with very small decimal numbers

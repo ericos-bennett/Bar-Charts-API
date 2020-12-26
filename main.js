@@ -2,57 +2,56 @@
 --TEST VARIABLES--
 ----------------*/
 
-// Test element to build the chart inside
 const testElement = '#bar-box';
 
-// Test data without label names
-const testData1 = [
-  2200,
-  200,
-  150,
-  400,
-  60,
-  200,
-  150,
-  400,
-  200,
-  -2000,
-  1500,
-  400,
-  950,
-  200,
-  150,
-  400,
-  200,
-  150,
-  400,
-  60,
-  400
+const testData = [
+  [
+    {
+      value: 70,
+      label: 'Zimbabwe',
+      barColor: 'red',
+      labelColor: 'blue'
+    },
+    {
+      value: 10,
+      label: 'Canada',
+      barColor: 'pink',
+      labelColor: 'yellow'
+    }
+  ],
+  [
+    {
+      value: 20,
+      label: 'Mozambique',
+      barColor: 'orange',
+      labelColor: 'orange'
+    },
+    {
+      value: 30,
+      label: 'Paraguay',
+      barColor: 'blue',
+      labelColor: 'red'
+    }
+  ],
+  [
+    {
+      value: 120,
+      label: 'USA',
+      barColor: 'pink',
+      labelColor: 'blue'
+    }
+  ]
 ];
 
-// Test data with label names
-const testData2 = [
-  [70, 'Zimbabwe'],
-  [10, 'Canada'],
-  [20, 'Mozambique'],
-  [30, 'Paraguay'],
-  [140, 'USA']
-];
-
-const testData3 = [0.000002, 0.000005, 0.000003, 0.000008];
-
-// Options object template
 const testOptions = {
-  valuesPosition: 'top',
-  // barColor and labelColor can be arrays for multiple colors
-  barColor: 'turquoise',
-  labelColor: 'green',
-  // barSpacing effects bar width
-  barSpacing: '0.25',
   title: 'My Chart',
   titleSize: '40px',
-  titleColor: 'pink',
-  yAxisDivisions: 4
+  titleColor: 'blue',
+  valueLabelPosition: 'center',
+  yAxisDivisions: 4,
+  barWidthSpacing: '0.25',
+  defaultBarColor: 'turquoise',
+  defaultlabelColor: 'green'
 };
 
 /*----------------
@@ -118,7 +117,7 @@ const addBars = function (data, options) {
   // Calculate the chart content width and width of each bar (accounting for the borders)
   let contentWidth = $('#bar-chart-bars').width();
   let barWidth =
-    (contentWidth / data.length - 2) * ((1 - options.barSpacing) / 1);
+    (contentWidth / data.length - 2) * ((1 - options.barWidthSpacing) / 1);
 
   // Determine the height we want to set for the highest bar
   let maxBarHeight = $('#bar-chart-bars').height() - 16;
@@ -126,10 +125,8 @@ const addBars = function (data, options) {
   // Determine the chart values to use, depending on the data input type
   let chartValues = [];
   for (i = 0; i < data.length; i++) {
-    if (typeof data[i] === 'number') {
-      chartValues.push(data[i]);
-    } else if (typeof data[i] === 'object') {
-      chartValues.push(data[i][0]);
+    for (k = 0; k < data[i].length; k++) {
+      chartValues.push(data[i][k].value);
     }
   }
 
@@ -149,48 +146,61 @@ const addBars = function (data, options) {
   // Determine the range between the highest and lowest values
   let range = highestValue - bottom;
 
-  // **Loop through the input array for each value
-  $.each(chartValues, function (i, val) {
-    // Determine the bar height for each (accounting for the borders)
-    let barHeight = ((val - bottom) / range) * maxBarHeight - 2;
-
-    // Append a bar div to the chart area
+  // Loop through the data input to generate bars in the correct places
+  for (let i = 0; i < data.length; i++) {
+    // Append a bar div to the chart area for each item in the array
     $('#bar-chart-bars').append('<div class="bar"></div>');
 
-    // Specify the size and styling of each bar
-    $('.bar').eq(i).css({
-      height: barHeight,
-      width: barWidth,
-      border: '1px solid black',
-      'border-bottom-style': 'none',
-      'background-color': options.barColor,
+    // Style the bar with correct flex properties
+    $('.bar:last').css({
       display: 'flex',
-      'justify-content': 'center'
+      'flex-direction': 'column-reverse'
     });
 
-    // Determine the vertical position of the bar's value label based on user input
-    let valueLabelOffset;
-    switch (options.valuesPosition) {
-      case 'top':
-        valueLabelOffset = '-1.2em';
-        break;
-      case 'centre':
-        valueLabelOffset = `calc(${barHeight / 2}px - 0.5em`;
-        break;
-      case 'bottom':
-        valueLabelOffset = `calc(${barHeight}px - 1.2em`;
-        break;
-    }
+    // Loop through each item's elements, which are individual bar sections to be stacked
+    for (let k = 0; k < data[i].length; k++) {
+      // Determine the bar height for each (accounting for the borders)
+      let barHeight = ((data[i][k].value - bottom) / range) * maxBarHeight - 2;
 
-    // Add the value label for each bar if required
-    if (options.valuesPosition !== 'none') {
-      $('.bar').eq(i).append(`<div>${val}</div>`);
-      $('.bar div').eq(i).css({
-        position: 'relative',
-        top: valueLabelOffset
+      // Append a bar section to the bar
+      $('.bar:last').append('<div class="bar-section"></div>');
+
+      // Specify the size and styling of each bar section
+      $('.bar-section:last').css({
+        height: barHeight,
+        width: barWidth,
+        border: '1px solid black',
+        'border-bottom-style': 'none',
+        'background-color': data[i][k].barColor,
+        display: 'flex',
+        'justify-content': 'center'
       });
+
+      // Determine the vertical position of the bar section's value label based on user input
+      let valueLabelOffset;
+      switch (options.valueLabelPosition) {
+        case 'top':
+          valueLabelOffset = '-1.2em';
+          break;
+        case 'center':
+          valueLabelOffset = `calc(${barHeight / 2}px - 0.5em`;
+          break;
+        case 'bottom':
+          valueLabelOffset = `calc(${barHeight}px - 1.2em`;
+          break;
+      }
+
+      // Add the value label for each bar section if required
+      if (options.valueLabelPosition !== 'none') {
+        $('.bar-section:last').append(`<div>${data[i][k].value}</div>`);
+        $('.bar-section div:last').css({
+          position: 'relative',
+          top: valueLabelOffset,
+          height: '0'
+        });
+      }
     }
-  });
+  }
 };
 
 /*------------
@@ -214,10 +224,8 @@ const addYAxis = function (data, options) {
   // Determine the chart values to use, depending on the data input type
   let chartValues = [];
   for (i = 0; i < data.length; i++) {
-    if (typeof data[i] === 'number') {
-      chartValues.push(data[i]);
-    } else if (typeof data[i] === 'object') {
-      chartValues.push(data[i][0]);
+    for (k = 0; k < data[i].length; k++) {
+      chartValues.push(data[i][k].value);
     }
   }
 
@@ -289,15 +297,15 @@ const addXAxis = function (data, options) {
     transform: 'translate(0,-0.5em)'
   });
 
-  // Add ticks for each bar in the chart
+  // Add ticks for each bar in the chart and style them
   for (let i = 0; i < data.length; i++) {
     $('#x-axis-ticks').append('<span></span>');
-    $('#x-axis-ticks span').eq(i).css({
-      width: '.5px',
-      height: '1em',
-      'background-color': 'black'
-    });
   }
+  $('#x-axis-ticks span').css({
+    width: '.5px',
+    height: '1em',
+    'background-color': 'black'
+  });
 
   // Generate and style the x-axis-labels div
   $('#x-axis').append('<div id="x-axis-labels"></div>');
@@ -347,4 +355,4 @@ const drawBarChart = function (data, options, element) {
   addXAxis(data, options);
 };
 
-drawBarChart(testData1, testOptions, testElement);
+drawBarChart(testData, testOptions, testElement);
