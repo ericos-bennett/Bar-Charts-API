@@ -1,6 +1,9 @@
-Add default bar and label colors if none specified
-Change data input to objects...
-Work on stacked bars
+To do
+  Review all code, clean up
+  Flesh out dummy index page
+  Upload to github pages
+  Write readme
 
-Y-axis labels do not work well with very small decimal numbers
-If x-axis value labels are exceptionally long, they can overflow out of the element box
+Notes
+  Y-axis labels do not work well with very small decimal numbers
+  If x-axis value labels are exceptionally long, they can overflow out of the element box

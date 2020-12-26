@@ -7,51 +7,72 @@ const testElement = '#bar-box';
 const testData = [
   [
     {
-      value: 70,
-      label: 'Zimbabwe',
-      barColor: 'red',
-      labelColor: 'blue'
+      value: 40,
+      label: 'Jean',
+      barColor: '',
+      labelColor: '#283618'
     },
-    {
-      value: 10,
-      label: 'Canada',
-      barColor: 'pink',
-      labelColor: 'yellow'
-    }
-  ],
-  [
     {
       value: 20,
-      label: 'Mozambique',
-      barColor: 'orange',
-      labelColor: 'orange'
-    },
-    {
-      value: 30,
-      label: 'Paraguay',
-      barColor: 'blue',
-      labelColor: 'red'
+      label: 'Mark',
+      barColor: '#bc6c25',
+      labelColor: ''
     }
   ],
   [
     {
-      value: 120,
-      label: 'USA',
-      barColor: 'pink',
-      labelColor: 'blue'
+      value: 110,
+      label: 'Lauren',
+      barColor: '#f2cc8f',
+      labelColor: ''
+    },
+    {
+      value: 80,
+      label: 'Bob',
+      barColor: '#d62828',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 160,
+      label: 'Will',
+      barColor: '',
+      labelColor: '#81b29a'
+    }
+  ],
+  [
+    {
+      value: 25,
+      label: 'Julien',
+      barColor: '#3d405b',
+      labelColor: ''
+    },
+    {
+      value: 17,
+      label: 'Roman',
+      barColor: '',
+      labelColor: ''
+    },
+    {
+      value: 82,
+      label: 'Elizabeth',
+      barColor: '#e07a5f',
+      labelColor: ''
     }
   ]
 ];
 
 const testOptions = {
-  title: 'My Chart',
+  title: 'Racing Distances',
   titleSize: '40px',
   titleColor: 'blue',
-  valueLabelPosition: 'center',
+  unitsMessage: 'KMs covered by each race participant by group',
+  valueLabelPosition: 'top',
   yAxisDivisions: 4,
   barWidthSpacing: '0.25',
-  defaultBarColor: 'turquoise',
-  defaultlabelColor: 'green'
+  defaultBarColor: '#fcbf49',
+  defaultLabelColor: '#fcbf49'
 };
 
 /*----------------
@@ -76,6 +97,9 @@ const prepareLayout = function (element, options) {
     'font-size': options.titleSize,
     color: options.titleColor
   });
+
+  // Add the units message below the title
+  $('#bar-chart-title').append('<h2>' + options.unitsMessage + '</h2>');
 
   // Add the div for the bars and y-axis
   $(element).append('<div id="bar-chart-content"></div>');
@@ -138,8 +162,16 @@ const addBars = function (data, options) {
     bottom = 0;
   }
 
-  // Dertermine the highest input value
-  let highestValue = chartValues.reduce(function (a, b) {
+  // Determine the value of the highest bar sum
+  let barHeights = [];
+  for (i = 0; i < data.length; i++) {
+    let barHeight = 0;
+    for (k = 0; k < data[i].length; k++) {
+      barHeight += data[i][k].value;
+    }
+    barHeights.push(barHeight);
+  }
+  let highestValue = barHeights.reduce(function (a, b) {
     return Math.max(a, b);
   });
 
@@ -165,15 +197,27 @@ const addBars = function (data, options) {
       // Append a bar section to the bar
       $('.bar:last').append('<div class="bar-section"></div>');
 
+      // Determine the bar color, default if none specified
+      let barColor;
+      if (data[i][k].barColor === '') {
+        if (data[i][k].labelColor !== '') {
+          barColor = data[i][k].labelColor;
+        } else {
+          barColor = options.defaultBarColor;
+        }
+      } else {
+        barColor = data[i][k].barColor;
+      }
+
       // Specify the size and styling of each bar section
       $('.bar-section:last').css({
         height: barHeight,
         width: barWidth,
+        display: 'flex',
+        'justify-content': 'center',
         border: '1px solid black',
         'border-bottom-style': 'none',
-        'background-color': data[i][k].barColor,
-        display: 'flex',
-        'justify-content': 'center'
+        'background-color': barColor
       });
 
       // Determine the vertical position of the bar section's value label based on user input
@@ -238,7 +282,15 @@ const addYAxis = function (data, options) {
   }
 
   // Dertermine the highest input value
-  let highestValue = chartValues.reduce(function (a, b) {
+  let barHeights = [];
+  for (i = 0; i < data.length; i++) {
+    let barHeight = 0;
+    for (k = 0; k < data[i].length; k++) {
+      barHeight += data[i][k].value;
+    }
+    barHeights.push(barHeight);
+  }
+  let highestValue = barHeights.reduce(function (a, b) {
     return Math.max(a, b);
   });
 
@@ -317,25 +369,46 @@ const addXAxis = function (data, options) {
     transform: 'translate(0,-0.2em)'
   });
 
-  // If they exist in the data input, add labels for each bar in the chart
+  // Add labels for each bar in the chart
   for (i = 0; i < data.length; i++) {
-    if (typeof data[i] === 'object') {
-      $('#x-axis-labels').append(`<div class="label">${data[i][1]}</div>`);
-      $('.label').eq(i).css({
-        width: '0',
-        'flex-grow': '1',
-        'text-align': 'center',
-        color: options.labelColor
+    $('#x-axis-labels').append(`<div class="bar-labels"></div>`);
+    $('.bar-labels:last').css({
+      display: 'flex',
+      width: '0',
+      'flex-grow': '1',
+      'flex-direction': 'column-reverse',
+      'justify-content': 'flex-end'
+    });
+    for (k = 0; k < data[i].length; k++) {
+      $('.bar-labels:last').append(
+        `<div class="label">${data[i][k].label}</div>`
+      );
+
+      // Add the label color, default if none specified
+      let labelColor;
+      if (data[i][k].labelColor === '') {
+        if (data[i][k].barColor !== '') {
+          labelColor = data[i][k].barColor;
+        } else {
+          labelColor = options.defaultLabelColor;
+        }
+      } else {
+        labelColor = data[i][k].labelColor;
+      }
+      $('.label:last').css({
+        color: labelColor,
+        margin: '0 auto',
+        'white-space': 'nowrap'
       });
     }
   }
 
   // Rotate all x-axis labels if one of them overflows
   let labelOverflow = false;
-  $('.label').each(function () {
+  $('.bar-labels').each(function () {
     if ($(this)[0].scrollWidth - $(this).width() > 1) {
       $('.label').css({
-        transform: 'rotate(-30deg) translate(-50%,-0.2em)',
+        transform: 'rotate(-30deg) translate(-40%,-0.2em)',
         'text-align': 'right',
         direction: 'rtl'
       });
