@@ -2,7 +2,7 @@
 --TEST VARIABLES--
 ----------------*/
 
-const testElement = '#bar-box';
+const testElement = '.bar-box:nth-of-type(1)';
 
 const testData = [
   [
@@ -99,9 +99,9 @@ const prepareLayout = function (element, options) {
   });
 
   // Add the units message below the title
-  $('#bar-chart-title').append('<h2>' + options.unitsMessage + '</h2>');
+  $('#bar-chart-title').append('<h3>' + options.unitsMessage + '</h3');
 
-  // Add the div for the bars and y-axis
+  // Add the parent div for the bars and y-axis
   $(element).append('<div id="bar-chart-content"></div>');
   $('#bar-chart-content').css({
     display: 'flex'
@@ -120,7 +120,7 @@ const prepareLayout = function (element, options) {
   $(element).append('<div id="x-axis"></div>');
   $('#x-axis').css('height', '4em');
 
-  // Style the bars container now that the other devs have been generated
+  // Style the bars container now that the other divs have been generated
   $('#bar-chart-bars').css({
     display: 'flex',
     'justify-content': 'space-around',
@@ -138,15 +138,15 @@ const prepareLayout = function (element, options) {
 ----------*/
 
 const addBars = function (data, options) {
-  // Calculate the chart content width and width of each bar (accounting for the borders)
-  let contentWidth = $('#bar-chart-bars').width();
+  // Calculate the width of each bar (accounting for their borders)
   let barWidth =
-    (contentWidth / data.length - 2) * ((1 - options.barWidthSpacing) / 1);
+    ($('#bar-chart-bars').width() / data.length - 2) *
+    ((1 - options.barWidthSpacing) / 1);
 
   // Determine the height we want to set for the highest bar
   let maxBarHeight = $('#bar-chart-bars').height() - 16;
 
-  // Determine the chart values to use, depending on the data input type
+  // Create an array of values from our input objects
   let chartValues = [];
   for (i = 0; i < data.length; i++) {
     for (k = 0; k < data[i].length; k++) {
@@ -162,7 +162,7 @@ const addBars = function (data, options) {
     bottom = 0;
   }
 
-  // Determine the value of the highest bar sum
+  // Determine the value of the highest bar (accounting for stacked bars)
   let barHeights = [];
   for (i = 0; i < data.length; i++) {
     let barHeight = 0;
@@ -194,10 +194,10 @@ const addBars = function (data, options) {
       // Determine the bar height for each (accounting for the borders)
       let barHeight = ((data[i][k].value - bottom) / range) * maxBarHeight - 2;
 
-      // Append a bar section to the bar
+      // Append the bar section to the bar
       $('.bar:last').append('<div class="bar-section"></div>');
 
-      // Determine the bar color, default if none specified
+      // Determine the bar color, using the label color or a default if none specified
       let barColor;
       if (data[i][k].barColor === '') {
         if (data[i][k].labelColor !== '') {
@@ -252,7 +252,7 @@ const addBars = function (data, options) {
 ------------*/
 
 const addYAxis = function (data, options) {
-  // Generate y-axis bar
+  // Generate the y-axis bar and style it
   $('#y-axis').append('<div id="y-axis-bar"></div>');
   $('#y-axis-bar').css({
     height: 'calc(100% + 0.7em)',
@@ -262,10 +262,10 @@ const addYAxis = function (data, options) {
     position: 'relative'
   });
 
-  // Determine the height we want to set for the highest bar
+  // Determine the height to set for the highest bar
   let maxBarHeight = $('#bar-chart-bars').height();
 
-  // Determine the chart values to use, depending on the data input type
+  // Create an array of values from our input objects
   let chartValues = [];
   for (i = 0; i < data.length; i++) {
     for (k = 0; k < data[i].length; k++) {
@@ -273,7 +273,7 @@ const addYAxis = function (data, options) {
     }
   }
 
-  // Set the lower boundary of the axes to the lowest value, or 0
+  // Set the lower boundary of the bars to the lowest value, or 0
   let bottom = chartValues.reduce(function (a, b) {
     return Math.min(a, b);
   });
@@ -281,7 +281,7 @@ const addYAxis = function (data, options) {
     bottom = 0;
   }
 
-  // Dertermine the highest input value
+  // Determine the value of the highest bar (accounting for stacked bars)
   let barHeights = [];
   for (i = 0; i < data.length; i++) {
     let barHeight = 0;
@@ -335,11 +335,7 @@ const addXAxis = function (data, options) {
     float: 'right'
   });
 
-  // Calculate the chart content width and width of each bar
-  let contentWidth = $('#bar-chart-bars').width();
-  let barWidth = contentWidth / data.length;
-
-  // Generate and style the x-axis-ticks div
+  // Generate and style the container for the x-axis-ticks
   $('#x-axis').append('<div id="x-axis-ticks"></div>');
   $('#x-axis-ticks').css({
     width: $('#bar-chart-bars').width(),
@@ -359,7 +355,7 @@ const addXAxis = function (data, options) {
     'background-color': 'black'
   });
 
-  // Generate and style the x-axis-labels div
+  // Generate and style the container for the x-axis-labels
   $('#x-axis').append('<div id="x-axis-labels"></div>');
   $('#x-axis-labels').css({
     width: $('#bar-chart-bars').width(),
@@ -369,7 +365,7 @@ const addXAxis = function (data, options) {
     transform: 'translate(0,-0.2em)'
   });
 
-  // Add labels for each bar in the chart
+  // Add labels for each bar section in the chart
   for (i = 0; i < data.length; i++) {
     $('#x-axis-labels').append(`<div class="bar-labels"></div>`);
     $('.bar-labels:last').css({
@@ -384,7 +380,7 @@ const addXAxis = function (data, options) {
         `<div class="label">${data[i][k].label}</div>`
       );
 
-      // Add the label color, default if none specified
+      // Add the label color, use the bar color or a default if none specified
       let labelColor;
       if (data[i][k].labelColor === '') {
         if (data[i][k].barColor !== '') {

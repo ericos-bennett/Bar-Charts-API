@@ -1,5 +1,4 @@
 To do
-  Review all code, clean up
   Flesh out dummy index page
   Upload to github pages
   Write readme
