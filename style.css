@@ -24,14 +24,28 @@ main {
   padding: 2em;
 }
 
-.bar-boxes {
-  display: flex;
-  justify-content: space-evenly;
+#intro {
+  width: 70vw;
+  margin: 0 auto 2em;
+  line-height: 1.25;
 }
 
-.bar-box {
+.barbox {
   height: 80vh;
   width: 80vw;
   margin: 0 auto 2em;
   border: 1px solid black;
+}
+
+#barboxes {
+  width: 80vw;
+  margin: 0 auto 2em;
+  display: flex;
+  justify-content: space-between;
+}
+
+#barboxes .barbox {
+  width: 48%;
+  height: 60vh;
+  margin: unset
 }

@@ -1,81 +1,4 @@
 /*----------------
---TEST VARIABLES--
-----------------*/
-
-const testElement = '.bar-box:nth-of-type(1)';
-
-const testData = [
-  [
-    {
-      value: 40,
-      label: 'Jean',
-      barColor: '',
-      labelColor: '#283618'
-    },
-    {
-      value: 20,
-      label: 'Mark',
-      barColor: '#bc6c25',
-      labelColor: ''
-    }
-  ],
-  [
-    {
-      value: 110,
-      label: 'Lauren',
-      barColor: '#f2cc8f',
-      labelColor: ''
-    },
-    {
-      value: 80,
-      label: 'Bob',
-      barColor: '#d62828',
-      labelColor: ''
-    }
-  ],
-  [
-    {
-      value: 160,
-      label: 'Will',
-      barColor: '',
-      labelColor: '#81b29a'
-    }
-  ],
-  [
-    {
-      value: 25,
-      label: 'Julien',
-      barColor: '#3d405b',
-      labelColor: ''
-    },
-    {
-      value: 17,
-      label: 'Roman',
-      barColor: '',
-      labelColor: ''
-    },
-    {
-      value: 82,
-      label: 'Elizabeth',
-      barColor: '#e07a5f',
-      labelColor: ''
-    }
-  ]
-];
-
-const testOptions = {
-  title: 'Racing Distances',
-  titleSize: '40px',
-  titleColor: 'blue',
-  unitsMessage: 'KMs covered by each race participant by group',
-  valueLabelPosition: 'top',
-  yAxisDivisions: 4,
-  barWidthSpacing: '0.25',
-  defaultBarColor: '#fcbf49',
-  defaultLabelColor: '#fcbf49'
-};
-
-/*----------------
 --PREPARE LAYOUT--
 ----------------*/
 
@@ -91,37 +14,39 @@ const prepareLayout = function (element, options) {
 
   // Add the title
   $(element).append('<div id="bar-chart-title"></div>');
-  $('#bar-chart-title').append('<h2>' + options.title + '</h2>');
-  $('#bar-chart-title').css({ 'padding-bottom': '1em' });
-  $('#bar-chart-title h2').css({
+  $(`${element} #bar-chart-title`).append('<h2>' + options.title + '</h2>');
+  $(`${element} #bar-chart-title`).css({ 'padding-bottom': '1em' });
+  $(`${element} #bar-chart-title h2`).css({
     'font-size': options.titleSize,
     color: options.titleColor
   });
 
   // Add the units message below the title
-  $('#bar-chart-title').append('<h3>' + options.unitsMessage + '</h3');
+  $(`${element} #bar-chart-title`).append(
+    '<h3>' + options.unitsMessage + '</h3'
+  );
 
   // Add the parent div for the bars and y-axis
   $(element).append('<div id="bar-chart-content"></div>');
-  $('#bar-chart-content').css({
+  $(`${element} #bar-chart-content`).css({
     display: 'flex'
   });
 
   // Add the y-axis div
-  $('#bar-chart-content').append('<div id="y-axis"></div>');
-  $('#y-axis').css({
+  $(`${element} #bar-chart-content`).append('<div id="y-axis"></div>');
+  $(`${element} #y-axis`).css({
     width: '4em'
   });
 
   // Add the bars div
-  $('#bar-chart-content').append('<div id="bar-chart-bars"></div>');
+  $(`${element} #bar-chart-content`).append('<div id="bar-chart-bars"></div>');
 
   // Add the x-axis div
   $(element).append('<div id="x-axis"></div>');
-  $('#x-axis').css('height', '4em');
+  $(`${element} #x-axis`).css('height', '4em');
 
   // Style the bars container now that the other divs have been generated
-  $('#bar-chart-bars').css({
+  $(`${element} #bar-chart-bars`).css({
     display: 'flex',
     'justify-content': 'space-around',
     'align-items': 'flex-end',
@@ -137,14 +62,14 @@ const prepareLayout = function (element, options) {
 --ADD BARS--
 ----------*/
 
-const addBars = function (data, options) {
+const addBars = function (data, options, element) {
   // Calculate the width of each bar (accounting for their borders)
   let barWidth =
-    ($('#bar-chart-bars').width() / data.length - 2) *
+    ($(`${element} #bar-chart-bars`).width() / data.length - 2) *
     ((1 - options.barWidthSpacing) / 1);
 
   // Determine the height we want to set for the highest bar
-  let maxBarHeight = $('#bar-chart-bars').height() - 16;
+  let maxBarHeight = $(`${element} #bar-chart-bars`).height() - 16;
 
   // Create an array of values from our input objects
   let chartValues = [];
@@ -181,10 +106,10 @@ const addBars = function (data, options) {
   // Loop through the data input to generate bars in the correct places
   for (let i = 0; i < data.length; i++) {
     // Append a bar div to the chart area for each item in the array
-    $('#bar-chart-bars').append('<div class="bar"></div>');
+    $(`${element} #bar-chart-bars`).append('<div class="bar"></div>');
 
     // Style the bar with correct flex properties
-    $('.bar:last').css({
+    $(`${element} .bar:last`).css({
       display: 'flex',
       'flex-direction': 'column-reverse'
     });
@@ -195,7 +120,7 @@ const addBars = function (data, options) {
       let barHeight = ((data[i][k].value - bottom) / range) * maxBarHeight - 2;
 
       // Append the bar section to the bar
-      $('.bar:last').append('<div class="bar-section"></div>');
+      $(`${element} .bar:last`).append('<div class="bar-section"></div>');
 
       // Determine the bar color, using the label color or a default if none specified
       let barColor;
@@ -210,7 +135,7 @@ const addBars = function (data, options) {
       }
 
       // Specify the size and styling of each bar section
-      $('.bar-section:last').css({
+      $(`${element} .bar-section:last`).css({
         height: barHeight,
         width: barWidth,
         display: 'flex',
@@ -236,8 +161,10 @@ const addBars = function (data, options) {
 
       // Add the value label for each bar section if required
       if (options.valueLabelPosition !== 'none') {
-        $('.bar-section:last').append(`<div>${data[i][k].value}</div>`);
-        $('.bar-section div:last').css({
+        $(`${element} .bar-section:last`).append(
+          `<div>${data[i][k].value}</div>`
+        );
+        $(`${element} .bar-section div:last`).css({
           position: 'relative',
           top: valueLabelOffset,
           height: '0'
@@ -251,10 +178,10 @@ const addBars = function (data, options) {
 --ADD Y-AXIS--
 ------------*/
 
-const addYAxis = function (data, options) {
+const addYAxis = function (data, options, element) {
   // Generate the y-axis bar and style it
-  $('#y-axis').append('<div id="y-axis-bar"></div>');
-  $('#y-axis-bar').css({
+  $(`${element} #y-axis`).append('<div id="y-axis-bar"></div>');
+  $(`${element} #y-axis-bar`).css({
     height: 'calc(100% + 0.7em)',
     width: '.5px',
     'background-color': 'black',
@@ -263,7 +190,7 @@ const addYAxis = function (data, options) {
   });
 
   // Determine the height to set for the highest bar
-  let maxBarHeight = $('#bar-chart-bars').height();
+  let maxBarHeight = $(`${element} #bar-chart-bars`).height();
 
   // Create an array of values from our input objects
   let chartValues = [];
@@ -305,8 +232,10 @@ const addYAxis = function (data, options) {
       tickValue >= 100000 || tickValue <= -100000
         ? tickValue.toPrecision(2)
         : Number(tickValue.toPrecision(4));
-    $('#y-axis-bar').append(`<span>${tickValueLabel} &#8212;</span>`);
-    $('#y-axis-bar span')
+    $(`${element} #y-axis-bar`).append(
+      `<span>${tickValueLabel} &#8212;</span>`
+    );
+    $(`${element} #y-axis-bar span`)
       .eq(i)
       .css({
         position: 'absolute',
@@ -324,10 +253,10 @@ const addYAxis = function (data, options) {
 --ADD X-AXIS--
 ------------*/
 
-const addXAxis = function (data, options) {
+const addXAxis = function (data, options, element) {
   // Generate the x-axis bar and style it
-  $('#x-axis').append('<span id="x-axis-bar"></span>');
-  $('#x-axis-bar').css({
+  $(`${element} #x-axis`).append('<span id="x-axis-bar"></span>');
+  $(`${element} #x-axis-bar`).css({
     width: 'calc(100% - 2.5em)',
     height: '1px',
     'background-color': 'black',
@@ -336,9 +265,9 @@ const addXAxis = function (data, options) {
   });
 
   // Generate and style the container for the x-axis-ticks
-  $('#x-axis').append('<div id="x-axis-ticks"></div>');
-  $('#x-axis-ticks').css({
-    width: $('#bar-chart-bars').width(),
+  $(`${element} #x-axis`).append('<div id="x-axis-ticks"></div>');
+  $(`${element} #x-axis-ticks`).css({
+    width: $(`${element} #bar-chart-bars`).width(),
     float: 'right',
     display: 'flex',
     'justify-content': 'space-around',
@@ -347,18 +276,18 @@ const addXAxis = function (data, options) {
 
   // Add ticks for each bar in the chart and style them
   for (let i = 0; i < data.length; i++) {
-    $('#x-axis-ticks').append('<span></span>');
+    $(`${element} #x-axis-ticks`).append('<span></span>');
   }
-  $('#x-axis-ticks span').css({
+  $(`${element} #x-axis-ticks span`).css({
     width: '.5px',
     height: '1em',
     'background-color': 'black'
   });
 
   // Generate and style the container for the x-axis-labels
-  $('#x-axis').append('<div id="x-axis-labels"></div>');
-  $('#x-axis-labels').css({
-    width: $('#bar-chart-bars').width(),
+  $(`${element} #x-axis`).append('<div id="x-axis-labels"></div>');
+  $(`${element} #x-axis-labels`).css({
+    width: $(`${element} #bar-chart-bars`).width(),
     float: 'right',
     display: 'flex',
     'justify-content': 'space-around',
@@ -367,8 +296,8 @@ const addXAxis = function (data, options) {
 
   // Add labels for each bar section in the chart
   for (i = 0; i < data.length; i++) {
-    $('#x-axis-labels').append(`<div class="bar-labels"></div>`);
-    $('.bar-labels:last').css({
+    $(`${element} #x-axis-labels`).append(`<div class="bar-labels"></div>`);
+    $(`${element} .bar-labels:last`).css({
       display: 'flex',
       width: '0',
       'flex-grow': '1',
@@ -376,7 +305,7 @@ const addXAxis = function (data, options) {
       'justify-content': 'flex-end'
     });
     for (k = 0; k < data[i].length; k++) {
-      $('.bar-labels:last').append(
+      $(`${element} .bar-labels:last`).append(
         `<div class="label">${data[i][k].label}</div>`
       );
 
@@ -391,7 +320,7 @@ const addXAxis = function (data, options) {
       } else {
         labelColor = data[i][k].labelColor;
       }
-      $('.label:last').css({
+      $(`${element} .label:last`).css({
         color: labelColor,
         margin: '0 auto',
         'white-space': 'nowrap'
@@ -401,9 +330,9 @@ const addXAxis = function (data, options) {
 
   // Rotate all x-axis labels if one of them overflows
   let labelOverflow = false;
-  $('.bar-labels').each(function () {
+  $(`${element} .bar-labels`).each(function () {
     if ($(this)[0].scrollWidth - $(this).width() > 1) {
-      $('.label').css({
+      $(`${element} .label`).css({
         transform: 'rotate(-30deg) translate(-40%,-0.2em)',
         'text-align': 'right',
         direction: 'rtl'
@@ -419,9 +348,333 @@ const addXAxis = function (data, options) {
 // Template for the final API function
 const drawBarChart = function (data, options, element) {
   prepareLayout(element, options);
-  addBars(data, options);
-  addYAxis(data, options);
-  addXAxis(data, options);
+  addBars(data, options, element);
+  addYAxis(data, options, element);
+  addXAxis(data, options, element);
 };
 
-drawBarChart(testData, testOptions, testElement);
+/*--------------------------
+--BAR BOX 1 TEST VARIABLES--
+--------------------------*/
+
+const testElement1 = '#barbox1';
+
+const testData1 = [
+  [
+    {
+      value: 40,
+      label: 'Jean',
+      barColor: '',
+      labelColor: '#004e00'
+    },
+    {
+      value: 20,
+      label: 'Mark',
+      barColor: '#008900',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 110,
+      label: 'Lauren',
+      barColor: '#4e0000',
+      labelColor: ''
+    },
+    {
+      value: 80,
+      label: 'Eric',
+      barColor: '#b10000',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 160,
+      label: 'Will',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 25,
+      label: 'Julien',
+      barColor: '#3d405b',
+      labelColor: ''
+    },
+    {
+      value: 17,
+      label: 'Roman',
+      barColor: '#3b3bc4',
+      labelColor: ''
+    },
+    {
+      value: 82,
+      label: 'Elizabeth',
+      barColor: '#6262ff',
+      labelColor: ''
+    }
+  ]
+];
+
+const testOptions1 = {
+  title: 'Racing Distances',
+  titleSize: '40px',
+  titleColor: '#4e0000',
+  unitsMessage: 'KMs covered by each race participant by group',
+  valueLabelPosition: 'top',
+  yAxisDivisions: 4,
+  barWidthSpacing: '0.25',
+  defaultBarColor: '#a67f00',
+  defaultLabelColor: '#black'
+};
+
+/*--------------------------
+--BAR BOX 2 TEST VARIABLES--
+--------------------------*/
+
+const testElement2 = '#barbox2';
+
+const testData2 = [
+  [
+    {
+      value: 2.6,
+      label: 'Aluminum',
+      barColor: '#b6b6b6',
+      labelColor: 'black'
+    }
+  ],
+  [
+    {
+      value: 7.87,
+      label: 'Iron',
+      barColor: '#453a3c',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 8.96,
+      label: 'Copper',
+      barColor: '',
+      labelColor: '#b87333'
+    }
+  ],
+  [
+    {
+      value: 19.1,
+      label: 'Uranium',
+      barColor: 'purple',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 19.3,
+      label: 'Gold',
+      barColor: 'gold',
+      labelColor: 'black'
+    }
+  ]
+];
+
+const testOptions2 = {
+  title: 'Densities of Metals',
+  titleSize: '30px',
+  titleColor: '',
+  unitsMessage: 'Measured in grams per cubic centimeter',
+  valueLabelPosition: 'center',
+  yAxisDivisions: 4,
+  barWidthSpacing: '0.1',
+  defaultBarColor: '#',
+  defaultLabelColor: '#'
+};
+
+/*--------------------------
+--BAR BOX 3 TEST VARIABLES--
+--------------------------*/
+
+const testElement3 = '#barbox3';
+
+const testData3 = [
+  [
+    {
+      value: 12.3,
+      label: 'Morocco',
+      barColor: 'darkred',
+      labelColor: 'black'
+    }
+  ],
+  [
+    {
+      value: 15.2,
+      label: 'United Arab Emirates',
+      barColor: 'darkgreen',
+      labelColor: 'black'
+    }
+  ],
+  [
+    {
+      value: 62.9,
+      label: 'China',
+      barColor: 'red',
+      labelColor: 'black'
+    }
+  ],
+  [
+    {
+      value: 79.7,
+      label: 'United States',
+      barColor: 'lightblue',
+      labelColor: 'black'
+    }
+  ],
+  [
+    {
+      value: 89.4,
+      label: 'France',
+      barColor: 'darkblue',
+      labelColor: 'black'
+    }
+  ]
+];
+
+const testOptions3 = {
+  title: 'Popular Tourist Destinations',
+  titleSize: '30px',
+  titleColor: '',
+  unitsMessage:
+    'Millions of international tourists in 2018. Stats for the top country in each geographic area.',
+  valueLabelPosition: 'top',
+  yAxisDivisions: 4,
+  barWidthSpacing: '0.1',
+  defaultBarColor: '#',
+  defaultLabelColor: '#'
+};
+
+/*--------------------------
+--BAR BOX 4 TEST VARIABLES--
+--------------------------*/
+
+const testElement4 = '#barbox4';
+
+const testData4 = [
+  [
+    {
+      value: 3,
+      label: 'Jan',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 5,
+      label: 'Feb',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 6,
+      label: 'Mar',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 9,
+      label: 'Apr',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 12,
+      label: 'May',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 15,
+      label: 'Jun',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 17,
+      label: 'Jul',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 17,
+      label: 'Aug',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 14,
+      label: 'Sep',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 10,
+      label: 'Oct',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 6,
+      label: 'Nov',
+      barColor: '',
+      labelColor: ''
+    }
+  ],
+  [
+    {
+      value: 4,
+      label: 'Dec',
+      barColor: '',
+      labelColor: ''
+    }
+  ]
+];
+
+const testOptions4 = {
+  title: 'Vancouver Climate',
+  titleSize: '50px',
+  titleColor: '#000062',
+  unitsMessage: 'Average daily temperature in degrees celcius, per month',
+  valueLabelPosition: 'center',
+  yAxisDivisions: 17,
+  barWidthSpacing: '0',
+  defaultBarColor: 'lightblue',
+  defaultLabelColor: ''
+};
+
+/*---------------------------
+--GENERATE THE 4 BAR CHARTS--
+---------------------------*/
+
+$(document).ready(drawBarChart(testData1, testOptions1, testElement1));
+$(document).ready(drawBarChart(testData2, testOptions2, testElement2));
+$(document).ready(drawBarChart(testData3, testOptions3, testElement3));
+$(document).ready(drawBarChart(testData4, testOptions4, testElement4));

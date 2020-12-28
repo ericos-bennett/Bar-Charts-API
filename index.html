@@ -7,6 +7,8 @@
   <title>Bar Charts API</title>
   <link rel="stylesheet" href="reset.css">
   <link rel="stylesheet" href="style.css">
+  <script src="jquery.js" defer></script>
+  <script src="main.js" defer></script>
 </head>
 <body>
   <header>
@@ -14,11 +16,13 @@
     <hr>
   </header>
   <main id="container">
-    <div class="bar-box"></div>
-    <div class="bar-box"></div>
-    <div class="bar-box"></div>
+    <div id="intro"><p>This page showcases a few examples of the <a href="https://github.com/ericos-bennett/bar-charts">Bar Charts API</a> I developed in preparation for the Lighthouse Labs Web Development Bootcamp. This was my first JavaScript project, and it relies heavily on Flexbox and jQuery. Check out the <a href="https://github.com/ericos-bennett/bar-charts/blob/main/README.md">readme</a> to learn more about how the interface functions. -Eric</p></div>
+    <div class="barbox" id="barbox1"></div>
+    <div id="barboxes">
+      <div class="barbox" id="barbox2"></div>
+      <div class="barbox" id="barbox3"></div>
+    </div>
+    <div class="barbox" id="barbox4"></div>
   </main>
-  <script src="jquery.js"></script>
-  <script src="main.js"> </script>
 </body>
 </html>
