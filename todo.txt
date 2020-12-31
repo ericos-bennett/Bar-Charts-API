@@ -1,8 +1,0 @@
-To do
-  Flesh out dummy index page
-  Upload to github pages
-  Write readme
-
-Notes
-  Y-axis labels do not work well with very small decimal numbers
-  If x-axis value labels are exceptionally long, they can overflow out of the element box
