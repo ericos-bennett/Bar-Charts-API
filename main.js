@@ -73,6 +73,7 @@ const addBars = function (data, options, element) {
 
   // Create an array of values from our input objects
   let chartValues = [];
+
   for (i = 0; i < data.length; i++) {
     for (k = 0; k < data[i].length; k++) {
       chartValues.push(data[i][k].value);
@@ -83,9 +84,8 @@ const addBars = function (data, options, element) {
   let bottom = chartValues.reduce(function (a, b) {
     return Math.min(a, b);
   });
-  if (bottom > 0) {
-    bottom = 0;
-  }
+
+  bottom = bottom > 0 ? 0 : bottom;
 
   // Determine the value of the highest bar (accounting for stacked bars)
   let barHeights = [];
