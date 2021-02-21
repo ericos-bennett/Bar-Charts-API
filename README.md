@@ -2,7 +2,7 @@
 
 ### About
 
-This library was built as my first JS project in preparation for the Lighthouse Labs Web Development bootcamp. The main.js file can be used to render bar charts within any HTML element. Head over to the [landing page](https://ericos-bennett.github.io/Bar-Charts-API/) to see some examples. The library requires jQuery.
+This library was built as my first JS project in preparation for the Lighthouse Labs Web Development bootcamp. The main.js file can be used to render bar charts within any HTML element. Head over to the [landing page](https://ericos-bennett.github.io/bar-charts-api/) to see some examples. The library requires jQuery.
 
 The main function takes 3 parameters to generate a chart:
 
